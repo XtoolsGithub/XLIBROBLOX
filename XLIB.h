@@ -243,7 +243,7 @@ namespace XLIB
 
 
 
-	auto r_backjump(DWORD jmp) // credit to avocado
+	auto r_backjump(DWORD jmp) // credit to Avocado
 	{
 		jmp = MODULE_OFFSET(MODULE_IDABASE, jmp);
 		DWORD OldProtect;
