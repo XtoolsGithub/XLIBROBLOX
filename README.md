@@ -15,17 +15,17 @@ Requires:
 
 
 Q/A:
-Q: Can you give * address/offset
-A: I will not provide 1:1 help this is for intermediate + users 
++ Q: Can you give * address/offset
++ A: I will not provide 1:1 help this is for intermediate + users 
 
-Q: Something is outdated!
-A: If you are 100% sure open a issue and tell me what is outdated/broken
++ Q: Something is outdated!
++ A: If you are 100% sure open a issue and tell me what is outdated/broken
 
-Q: I Crash/Shutdown on usage
-A: I will not provide 1:1 help this is for intermediate + users
++ Q: I Crash/Shutdown on usage
++ A: I will not provide 1:1 help this is for intermediate + users
 
-Q: Will you add * functions
-A: DM -> X-Tools#1292 (or join discord via -> http://xtools.cf) on discord and ill see
++ Q: Will you add * functions
++ A: DM -> X-Tools#1292 (or join discord via -> http://xtools.cf) on discord and ill see
 
 Credits:
 + Eternal
