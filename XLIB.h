@@ -15,6 +15,8 @@
 #include <commctrl.h>
 #include <Richedit.h>
 #include <stdio.h>
+#include <crtdbg.h>
+#include <tchar.h>
 
 extern "C" {
 #include "Lua\lua.h"
@@ -25,11 +27,12 @@ extern "C" {
 #include "Lua\llimits.h"
 }
 
+using namespace std;
 
 
 /*
 
-Written by XTOOLS -> VERSION 1.0
+Written by XTOOLS -> VERSION 1.1
 
 Discord -> http://xtools.cf
 
@@ -38,7 +41,7 @@ Discord -> http://xtools.cf
 
 /*
 
-R LUA STATE OFFSETS
+[R LUA STATE OFFSETS]
 
 rL + 16 = L->top
 rL + 20 = L->stack
@@ -219,6 +222,21 @@ namespace XLIB
 		return (*(_DWORD *)(a1 + top) - *(_DWORD *)(a1 + base)) >> 4;
 	}
 
+	int r2_lua_gettop(lua_State *L) {
+		int rvalue = 0;
+		__asm {
+			push ebx
+			mov ebx, L
+			push edi
+			mov edi, [ebx + 1Ch]
+			sub edi, [ebx + 10h]
+			sar edi, 4
+			mov rvalue, edi
+			pop edi
+			pop ebx
+		}
+		return rvalue;
+	}
 	
 
 
@@ -241,6 +259,109 @@ namespace XLIB
 		}
 	}
 
+	string FileRead(string file_path) {
+		std::ifstream ifs;
+		ifs.open(file_path, std::ifstream::in);
+		string fdata = "";
+		char c = ifs.get();
+		while (ifs.good()) {
+			fdata += c;
+			c = ifs.get();
+		}
+		ifs.close();
+		return fdata;
+	}
+
+	string wstr_to_str(wstring wstr) {
+		string str = "";
+		for (char c : wstr)
+			if ((BYTE)c >= 0x20 && (BYTE)c <= 0x7A)
+				str += c;
+			else break;
+		return str;
+	}
+	/*
+
+This code requires UNINCODE in PROJECT SETTINGS
+
+	string most_recent_log() {
+		WCHAR fname[MAX_PATH];
+		wstring wfpath, logspath;
+		GetModuleFileName(GetModuleHandle(NULL), fname, sizeof(fname));
+		wfpath = wstring(fname);
+		for (int i = 0; i < wfpath.length(); i++)
+			if ((BYTE)wfpath[i] > 0x20 && (BYTE)wfpath[i] < 0x7F) { // valid characters only
+				if ((i + 8) < wfpath.length())
+					if (wfpath.substr(i, 8) == L"Versions")
+						break;
+					else logspath += wfpath[i];
+			}
+			else break;
+		logspath += L"logs"; // Lets check them logs
+
+		WIN32_FIND_DATA FindFileData;
+		HANDLE hFind;
+		TCHAR patter[MAX_PATH];
+		FILETIME bestDate = { 0, 0 };
+		FILETIME curDate;
+		string filename = "no file";
+		memset(patter, 0x00, MAX_PATH);
+		_stprintf(patter, TEXT("%s\\*.txt"), logspath.c_str());
+		hFind = FindFirstFile(patter, &FindFileData);
+		if (hFind == INVALID_HANDLE_VALUE) {
+			printf("Find file failed (%d)\n", GetLastError());
+			return "";
+		}
+		else {
+			do {
+				//ignore current and parent directories
+				if (_tcscmp(FindFileData.cFileName, TEXT(".")) == 0 || _tcscmp(FindFileData.cFileName, TEXT("..")) == 0)
+					continue;
+				if (FindFileData.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) {
+					//ignore directories
+				}
+				else {
+					//list the Files
+					string filepath = (wstr_to_str(logspath) + "\\" + wstr_to_str(FindFileData.cFileName));
+					curDate = FindFileData.ftCreationTime;
+					if (CompareFileTime(&curDate, &bestDate) > 0) {
+						bestDate = curDate;
+						// Put the Path to the file first.
+						filename = filepath;
+					}
+				}
+			} while (FindNextFile(hFind, &FindFileData));
+			FindClose(hFind);
+		}
+
+		return filename;
+	}
+	*/
+
+	/*
+
+	This code requires UNINCODE in PROJECT SETTINGS
+
+	DWORD to_addr(string& str) {
+		string addr("0x" + str);
+		DWORD m_dwIP = 0x00000000;
+		istringstream ss(addr);
+		ss >> hex >> m_dwIP;
+		return m_dwIP;
+	}
+	*/
+
+	string sub(string str, int at, int amount) {
+		if ((at + amount) > str.length()) return "";
+		return str.substr(at, amount);
+	}
+
+	int strmatch(string str1, string str2) {
+		if (str1.find(str2) != string::npos)
+			return (int)str1.find(str2);
+		else
+			return -1;
+	}
 
 
 	auto r_backjump(DWORD jmp) // credit to Avocado

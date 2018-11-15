@@ -5,6 +5,7 @@ XLIB is a roblox C++ libary for creating eggsploits.
 
 Includes:
 + Self updating lua functions
++ Auto Grab ScriptContext . Client . Game from Logs
 + Backjump functions
 + Sehchainfaker
 
