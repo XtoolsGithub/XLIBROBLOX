@@ -32,7 +32,7 @@ using namespace std;
 
 /*
 
-Written by XTOOLS -> VERSION 1.1
+Written by XTOOLS -> VERSION 1.1.1 HOTFIX
 
 Discord -> http://xtools.cf
 
@@ -43,12 +43,8 @@ Discord -> http://xtools.cf
 
 [R LUA STATE OFFSETS]
 
-rL + 16 = L->top
-rL + 20 = L->stack
-rL + 28 = L->base
-rL + 32 = L->stack_last
-rL + 48 = L->stacksize
-rL + 104 = (global environment)
+rL + 32 = L->top
+rL + 12 = L->base
 
 */
 
@@ -110,30 +106,35 @@ namespace XLIB
 				switch (idx)
 				{
 				case -10002:
-					result = *(DWORD*)(rL + 104);
+					result = *(DWORD *)(rL + 64);
 					break;
 				case -10001:
-					result = *(DWORD*)(rL + 72);
-					*(DWORD*)(result) = *(DWORD*)(**(DWORD **)(*(DWORD *)(rL + 12) + 16) + 12);
+					result = *(DWORD *)(rL + 80);
+					*(DWORD*)(result) = *(DWORD *)(***(DWORD ***)(rL + 28) + 12);
 					((DWORD*)result)[2] = 7;
 					break;
 				case -10000:
-					counter = **(DWORD**)(*(DWORD *)(rL + 12) + 16);
-					if (-10002 - idx > *(BYTE*)(counter + 7))
+					result = *(DWORD *)((*(DWORD *)(rL + 20) ^ (rL + 20)) + 104);
+					break;
+				default:
+					counter = ***(DWORD ***)(rL + 28);
+					if (-10002 - idx > *(unsigned __int8 *)(counter + 7))
 						result = NULL;
 					else
-						result = *(DWORD*)(counter + 16 * (-10002 - idx) + 8);
+						result = *(DWORD *)(counter + 16 * (-10002 - idx) + 8);
 					break;
 				}
 			}
 			else
-				result = *(DWORD*)(*(DWORD*)(rL + 32) + 16 * idx);
+			{
+				result = *(DWORD *)(*(DWORD *)(rL + 32) + 16 * idx);
+			}
 		}
 		else
 		{
 			result = NULL;
-			if ((unsigned int)(16 * idx + *(DWORD*)(rL + 8) - 16) < *(DWORD*)(rL + 32))
-				result = *(DWORD*)(16 * idx + *(DWORD*)(rL + 8) - 16);
+			if ((unsigned int)(16 * idx + *(DWORD *)(rL + 12) - 16) < *(DWORD *)(rL + 32))
+				result = *(DWORD *)(16 * idx + *(DWORD *)(rL + 12) - 16);
 		}
 		return result;
 	}
